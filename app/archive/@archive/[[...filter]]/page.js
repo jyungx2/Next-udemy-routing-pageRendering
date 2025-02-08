@@ -26,15 +26,16 @@ export default function FilteredNewsPage({ params }) {
   const selectedMonth = filter?.[1];
 
   let news;
-  let links = getAvailableNewsYears();
+  let links = getAvailableNewsYears(); // links = years : 처음에는 무조건 년도만 보여주다가..
 
   if (selectedYear && !selectedMonth) {
     news = getNewsForYear(selectedYear);
-    links = getAvailableNewsMonths(selectedYear); // links 변수를 availableYears -> 선택된 Years에 대한 availableMonths으로 변경!
+    links = getAvailableNewsMonths(selectedYear); // 년도를 선택했다면, links 변수를 availableYears -> 선택된 year에 대한 유효 월(availableNewsMonths)을 보여줌!
   }
 
   if (selectedYear && selectedMonth) {
     news = getNewsForYearAndMonth(selectedYear, selectedMonth);
+    links = [];
   }
 
   let newsContent = <p>No news found for the selected period.</p>;
@@ -50,8 +51,8 @@ export default function FilteredNewsPage({ params }) {
           <ul>
             {links.map((link) => {
               const href = selectedYear
-                ? `/archive/${selectedYear}/${link}`
-                : `/archive/${link}`;
+                ? `/archive/${selectedYear}/${link}` // link = month
+                : `/archive/${link}`; // link = year
               return (
                 <li key={link}>
                   <Link href={href}>{link}</Link>
