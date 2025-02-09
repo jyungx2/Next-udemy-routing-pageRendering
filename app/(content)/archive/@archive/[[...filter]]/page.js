@@ -17,7 +17,7 @@ import Link from "next/link";
 // const news = getNewsForYear(newsYear);
 // return <NewsList news={news} />;
 
-export default function FilteredNewsPage({ params }) {
+export default async function FilteredNewsPage({ params }) {
   const filter = params.filter; // filter method holds an 'array' of all the matched path segments.
   // console.log(filter); // ['2024']
 
@@ -26,7 +26,7 @@ export default function FilteredNewsPage({ params }) {
   const selectedMonth = filter?.[1];
 
   let news;
-  let links = getAvailableNewsYears(); // links = years : 처음에는 무조건 년도만 보여주다가..
+  let links = await getAvailableNewsYears(); // links = years : 처음에는 무조건 년도만 보여주다가..
 
   if (selectedYear && !selectedMonth) {
     news = getNewsForYear(selectedYear);
@@ -34,7 +34,7 @@ export default function FilteredNewsPage({ params }) {
   }
 
   if (selectedYear && selectedMonth) {
-    news = getNewsForYearAndMonth(selectedYear, selectedMonth);
+    news = await getNewsForYearAndMonth(selectedYear, selectedMonth);
     links = [];
   }
 
@@ -44,10 +44,16 @@ export default function FilteredNewsPage({ params }) {
     newsContent = <NewsList news={news} />;
   }
 
+  const availableYears = await getAvailableNewsYears(); // 비동기함수 -> await 필요 (Months는 비동기함수 x)
+  // ✅ 오류 해결:
+  // - 기존 코드에서 `+selectedYear`를 사용한 이유는 `DUMMY_DATA`를 사용할 때 숫자 변환이 필요했기 때문.
+  // - 하지만 이제 SQLite를 이용한 API 데이터에서는 `selectedYear`가 문자열(string) 값으로 반환됨.
+  // - 따라서 `+selectedYear`를 사용할 필요가 없으며, 숫자로 변환하지 않고 문자열 그대로 비교해야 함.
+
   if (
-    (selectedYear && !getAvailableNewsYears().includes(+selectedYear)) ||
+    (selectedYear && !availableYears().includes(selectedYear)) ||
     (selectedMonth &&
-      !getAvailableNewsMonths(selectedYear).includes(+selectedMonth))
+      !getAvailableNewsMonths(selectedYear).includes(selectedMonth))
   ) {
     throw new Error("Invalid filter.");
   }

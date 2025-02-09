@@ -13,8 +13,8 @@ import { getLatestNews } from "@/lib/news";
 // 결과적으로 `/archive` 경로에서 연도를 선택하면 해당 연도의 뉴스만 보여지고,
 // 그 외의 부분은 항상 최신 뉴스가 표시됩니다. 이로써 두 개의 라우트가 하나의 페이지에 독립적으로 존재하는 구조가 완성됩니다.
 
-export default function LatestNewsPage() {
-  const latestNews = getLatestNews();
+export default async function LatestNewsPage() {
+  const latestNews = await getLatestNews();
   return (
     <>
       <h2>Latest News Page</h2>
