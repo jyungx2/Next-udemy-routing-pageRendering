@@ -1,16 +1,10 @@
 // "use client"; // useEffect hook is a hook that needs to run on the client-side.
 import NewsList from "@/components/news-list";
+import { getAllNews } from "@/lib/news";
 
 export default async function NewsPage() {
-  const res = await fetch("http://localhost:8080/news"); // you can still use fetch() directly inside of a Server-side component.
-  // Because...
-  // 1. It's supported by Node.js which executes that server-side code anyways.
-  // 2. NextJS extends this fetch function and adds some extra caching related to features to it.
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch news.");
-  }
-  const news = await res.json();
+  // 162. Why use a separate Backend? Fetching Directly From the Source!
+  const news = getAllNews();
 
   // 2️⃣ Option 2: Server-side data fetching
   // useEffect를 사용해 client-side data fetching 방식을 이용: View Page Source를 클릭해 확인해보면 가져온 데이터들에 대한 코드가 보이지 않았다.
@@ -22,7 +16,23 @@ export default async function NewsPage() {
   // * async 컴포넌트의 주요 특징:
   // 1. 컴포넌트가 async로 선언되면, 해당 컴포넌트 내의 모든 await 작업이 완료될 때까지 렌더링이 일어나지 않습니다.
   // 2. 따라서 news = await res.json()이 완료되기 전까지는 return문의 JSX가 실행되지 않습니다.
+
+  // const res = await fetch("http://localhost:8080/news"); // you can still use fetch() directly inside of a Server-side component.
+  // Because...
+  // 1. It's supported by Node.js which executes that server-side code anyways.
+  // 2. NextJS extends this fetch function and adds some extra caching related to features to it.
+
+  // if (!res.ok) {
+  //   throw new Error("Failed to fetch news.");
+  // }
+  // const news = await res.json();
+
   // ✅ 이러한 조건부 렌더링 코드를 제거할 수 있는 점은 Next.js의 Server Components의 장점 중 하나로, 데이터 fetching과 렌더링을 더 간단하고 안전하게 만들어준다.
+
+  // 💡 Server Component의 장점:
+  // 1. async 컴포넌트는 모든 await 작업이 완료될 때까지 렌더링되지 않음
+  // 2. 데이터 존재 여부를 체크하는 조건부 렌더링이 불필요
+  // 3. View Page Source에서 데이터가 확인 가능 (SEO 친화적)
 
   // 1️⃣ Option 1: Client-side data fetching
   // 이전 방식
