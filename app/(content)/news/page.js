@@ -4,7 +4,7 @@ import { getAllNews } from "@/lib/news";
 
 export default async function NewsPage() {
   // 162. Why use a separate Backend? Fetching Directly From the Source!
-  const news = getAllNews();
+  const news = await getAllNews(); // Promise를 반환하므로 await 필요
 
   // 2️⃣ Option 2: Server-side data fetching
   // useEffect를 사용해 client-side data fetching 방식을 이용: View Page Source를 클릭해 확인해보면 가져온 데이터들에 대한 코드가 보이지 않았다.
